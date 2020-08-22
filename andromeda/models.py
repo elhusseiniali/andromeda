@@ -13,8 +13,8 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(EmailType)
+    username = db.Column(db.String(20))
+    email = db.Column(EmailType, unique=True, nullable=False)
 
     password = db.Column(db.String(60), nullable=False)
 
