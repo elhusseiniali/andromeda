@@ -1,2 +1,2 @@
-# flask boilerplate
-Just boilerplate code for new Flask projects. Includes Flask-Admin and SQLAlchemy (with a model for users); also has a login page.
+# andromeda
+A Flask-based flight management system. Allows admins and special users to register new flights and all users to book them.
