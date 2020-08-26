@@ -1,7 +1,7 @@
 from andromeda import db, login_manager, bcrypt
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.hybrid import hybrid_property
+from flask_validator import ValidateEmail, ValidateCountry
 
 
 @login_manager.user_loader
@@ -29,6 +29,17 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return bcrypt.check_password_hash(self._password, password)
 
+    @classmethod
+    def __declare_last__(cls):
+        # Check available validators:
+        # https://flask-validator.readthedocs.io/en/latest/
+        # TODO: handle exception properly in admin panel
+        ValidateEmail(User.email,
+                      allow_smtputf8=True,
+                      check_deliverability=True,
+                      throw_exception=True,
+                      message="The e-mail is invalid. Please check it.")
+
     def __init__(self, username, email, password, phone_number=None):
         self.username = username
         self.email = email
@@ -48,6 +59,14 @@ class Company(db.Model):
     phone_number = db.Column(db.String(30))
     ticket_quota = db.Column(db.Integer)
 
+    @classmethod
+    def __declare_last__(cls):
+        ValidateEmail(Company.email,
+                      allow_smtputf8=True,
+                      check_deliverability=True,
+                      throw_exception=True,
+                      message="The e-mail is invalid. Please check it.")
+
     def __init__(self, name, email, phone_number=None, ticket_quota=0):
         self.name = name
         self.email = email
@@ -66,6 +85,13 @@ class Country(db.Model):
     cities = db.relationship('City',
                              back_populates="country",
                              lazy=True)
+
+    @classmethod
+    def __declare_last__(cls):
+        ValidateCountry(Country.name,
+                        allow_null=False,
+                        throw_exception=True,
+                        message="The country {key} does not exist.")
 
     def __init__(self, name):
         self.name = name
