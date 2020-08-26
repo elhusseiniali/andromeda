@@ -1,6 +1,8 @@
 from andromeda import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm import validates
+from validate_email import validate_email  # Package: py3-validate-email
 
 
 @login_manager.user_loader
@@ -27,6 +29,20 @@ class User(db.Model, UserMixin):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    # An example of validation
+    @validates('email')
+    def validate_email(self, key, address):
+        try:
+            # check: https://pypi.org/project/py3-validate-email/
+            validate_email(email_address=address,
+                           use_blacklist=True,
+                           # If true checks the mx-records and
+                           # check whether the email actually exists
+                           check_mx=False,
+                           check_regex=True)
+        except AssertionError as error:
+            print(error)
 
     def __init__(self, username, email, password, phone_number=None):
         self.username = username
