@@ -33,9 +33,20 @@ from flask_admin.contrib.sqla import ModelView
 # set optional bootswatch theme
 app.config['FLASK_ADMIN_SWATCH'] = 'flatly'
 
+
+class UserView(ModelView):
+    form_columns = (
+        'username',
+        'email',
+        'password',
+        'phone_number',
+    )
+    column_editable_list = ('username', 'email', 'phone_number')
+
+
 admin = Admin(app, name='Andromeda Admin', template_mode='bootstrap3')
 # Add administrative views here
-admin.add_view(ModelView(User, db.session))
+admin.add_view(UserView(User, db.session))
 admin.add_view(ModelView(Company, db.session))
 admin.add_view(ModelView(Country, db.session))
 admin.add_view(ModelView(City, db.session))

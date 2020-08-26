@@ -1,8 +1,7 @@
-from andromeda import db, login_manager
+from andromeda import db, login_manager, bcrypt
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import validates
-from validate_email import validate_email  # Package: py3-validate-email
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 @login_manager.user_loader
@@ -16,33 +15,19 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128))
+    _password = db.Column(db.String(128))  # Hashed Password
     phone_number = db.Column(db.String(30))
 
-    @property
+    @hybrid_property
     def password(self):
-        raise AttributeError("password is not a readable attribute")
+        return self._password
 
     @password.setter
     def password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self._password = bcrypt.generate_password_hash(password)
 
     def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    # An example of validation
-    @validates('email')
-    def validate_email(self, key, address):
-        try:
-            # check: https://pypi.org/project/py3-validate-email/
-            validate_email(email_address=address,
-                           use_blacklist=True,
-                           # If true checks the mx-records and
-                           # check whether the email actually exists
-                           check_mx=False,
-                           check_regex=True)
-        except AssertionError as error:
-            print(error)
+        return bcrypt.check_password_hash(self._password, password)
 
     def __init__(self, username, email, password, phone_number=None):
         self.username = username
