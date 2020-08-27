@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    _password = db.Column(db.String(128))  # Hashed Password
+    _password = db.Column(db.String(128), nullable=False)  # Hashed Password
     phone_number = db.Column(db.String(30))
 
     @hybrid_property
