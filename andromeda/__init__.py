@@ -28,10 +28,15 @@ from andromeda.models import User, Company, Country, City
 
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.model import typefmt
 
 
 # set optional bootswatch theme
 app.config['FLASK_ADMIN_SWATCH'] = 'flatly'
+
+# Show null values instead of empty strings.
+MY_DEFAULT_FORMATTERS = dict(typefmt.BASE_FORMATTERS)
+MY_DEFAULT_FORMATTERS.update({type(None): typefmt.null_formatter})
 
 
 class UserView(ModelView):
@@ -42,11 +47,24 @@ class UserView(ModelView):
         'phone_number',
     )
     column_editable_list = ('username', 'email', 'phone_number')
+    column_searchable_list = ('username', 'email')
+    column_type_formatters = MY_DEFAULT_FORMATTERS
+
+
+class CountryView(ModelView):
+    form_excluded_columns = ('cities')
+    column_type_formatters = MY_DEFAULT_FORMATTERS
+
+
+class CityView(ModelView):
+    form_columns = ('name', 'country')
+    column_list = ('name', 'country')
+    column_type_formatters = MY_DEFAULT_FORMATTERS
 
 
 admin = Admin(app, name='Andromeda Admin', template_mode='bootstrap3')
 # Add administrative views here
 admin.add_view(UserView(User, db.session))
 admin.add_view(ModelView(Company, db.session))
-admin.add_view(ModelView(Country, db.session))
-admin.add_view(ModelView(City, db.session))
+admin.add_view(CountryView(Country, db.session))
+admin.add_view(CityView(City, db.session))
