@@ -91,7 +91,7 @@ class Country(db.Model):
         ValidateCountry(Country.name,
                         allow_null=False,
                         throw_exception=True,
-                        message="The country {key} does not exist.")
+                        message="This country does not exist.")
 
     def __init__(self, name):
         self.name = name
