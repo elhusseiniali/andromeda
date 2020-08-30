@@ -57,7 +57,7 @@ class Company(db.Model):
     __tablename__ = "company"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(50), unique=True, nullable=False)
+    name = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     phone_number = db.Column(db.String(30))
     ticket_quota = db.Column(db.Integer)
@@ -88,10 +88,9 @@ class Country(db.Model):
     cities = db.relationship('City',
                              back_populates="country",
                              lazy=True)
-    passport = db.relationship('Passport',
-                               back_populates="user_country",
-                               uselist=False,
-                               lazy=True)
+    passports = db.relationship('Passport',
+                                back_populates="user_country",
+                                lazy=True)
 
     def __init__(self, name):
         self.name = name
@@ -118,6 +117,14 @@ class City(db.Model):
     country = db.relationship('Country',
                               back_populates="cities",
                               lazy=True)
+    arrivals = db.relationship('Flight',
+                               foreign_keys="Flight.destination_city_id",
+                               back_populates="destination_city",
+                               lazy=True)
+    departures = db.relationship('Flight',
+                                 foreign_keys="Flight.origin_city_id",
+                                 back_populates="origin_city",
+                                 lazy=True)
 
     def __init__(self, name, country_id):
         self.name = name
@@ -140,7 +147,7 @@ class Passport(db.Model):
                            db.ForeignKey('country.id'),
                            nullable=False)
     user_country = db.relationship('Country',
-                                   back_populates="passport",
+                                   back_populates="passports",
                                    lazy=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -158,5 +165,40 @@ class Passport(db.Model):
         self.expiration_date = expiration_date
 
     def __repr__(self):
-        return (f"Passport('{self.first_name}', '{self.last_name}',\
-                           '{self.expiration_date}')")
+        return (f"Passport('{self.first_name}', '{self.last_name}',"
+                f"'{self.expiration_date}')")
+
+
+class Flight(db.Model):
+    __tablename__ = "flight"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    departure = db.Column(db.DateTime, nullable=False)
+    arrival = db.Column(db.DateTime, nullable=False)
+    destination_city_id = db.Column(db.Integer,
+                                    db.ForeignKey('city.id'),
+                                    nullable=False)
+    destination_city = db.relationship('City',
+                                       foreign_keys=destination_city_id,
+                                       back_populates="arrivals",
+                                       lazy=True)
+    origin_city_id = db.Column(db.Integer,
+                               db.ForeignKey('city.id'),
+                               nullable=False)
+    origin_city = db.relationship('City',
+                                  foreign_keys=origin_city_id,
+                                  back_populates="departures",
+                                  lazy=True)
+
+    def __init__(self, name, destination_city_id, origin_city_id, departure,
+                 arrival):
+        self.name = name
+        self.destination_city_id = destination_city_id
+        self.origin_city_id = origin_city_id
+        self.departure = departure
+        self.arrival = arrival
+
+    def __repr__(self):
+        return (f"Flight('{self.name}', '{self.destination_city}',"
+                f"'{self.origin_city}')")
