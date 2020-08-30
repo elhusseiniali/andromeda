@@ -83,6 +83,10 @@ class Company(db.Model):
                       check_deliverability=True,
                       throw_exception=True,
                       message="The e-mail is invalid. Please check it.")
+        ValidatePhoneNumber(Company.phone_number,
+                            allow_null=True,
+                            throw_exception=True,
+                            message="Phone Number is invalid.")
 
 
 class Country(db.Model):
