@@ -60,7 +60,7 @@ class Company(db.Model):
     name = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     phone_number = db.Column(db.String(30))
-    ticket_quota = db.Column(db.Integer)
+    ticket_quota = db.Column(db.Integer, default=0)
 
     def __init__(self, name, email, phone_number=None, ticket_quota=0):
         self.name = name
