@@ -24,7 +24,7 @@ login_manager.login_message_category = 'info'
 #   and imports in a package. The order of the imports is also important.
 #   These two imports *had* to happen after initializing db.
 from andromeda import routes
-from andromeda.models import User, Company, Country, City
+from andromeda.models import User, Company, Country, City, Passport
 
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -52,7 +52,7 @@ class UserView(ModelView):
 
 
 class CountryView(ModelView):
-    form_excluded_columns = ('cities')
+    form_excluded_columns = ('cities', 'passport')
     column_type_formatters = MY_DEFAULT_FORMATTERS
 
 
@@ -62,9 +62,15 @@ class CityView(ModelView):
     column_type_formatters = MY_DEFAULT_FORMATTERS
 
 
+class PassportView(ModelView):
+    column_labels = dict(user_country='Country')
+    column_type_formatters = MY_DEFAULT_FORMATTERS
+
+
 admin = Admin(app, name='Andromeda Admin', template_mode='bootstrap3')
 # Add administrative views here
 admin.add_view(UserView(User, db.session))
 admin.add_view(ModelView(Company, db.session))
 admin.add_view(CountryView(Country, db.session))
 admin.add_view(CityView(City, db.session))
+admin.add_view(PassportView(Passport, db.session))

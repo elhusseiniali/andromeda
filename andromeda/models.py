@@ -17,6 +17,18 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(50), unique=True, nullable=False)
     _password = db.Column(db.String(128), nullable=False)  # Hashed Password
     phone_number = db.Column(db.String(30))
+    passports = db.relationship('Passport',
+                                back_populates="user",
+                                lazy=True)
+
+    def __init__(self, username, email, password, phone_number=None):
+        self.username = username
+        self.email = email
+        self.password = password
+        self.phone_number = phone_number
+
+    def __repr__(self):
+        return (f"User('{self.username}','{self.email}')")
 
     @hybrid_property
     def password(self):
@@ -40,15 +52,6 @@ class User(db.Model, UserMixin):
                       throw_exception=True,
                       message="The e-mail is invalid. Please check it.")
 
-    def __init__(self, username, email, password, phone_number=None):
-        self.username = username
-        self.email = email
-        self.password = password
-        self.phone_number = phone_number
-
-    def __repr__(self):
-        return (f"User('{self.username}','{self.email}')")
-
 
 class Company(db.Model):
     __tablename__ = "company"
@@ -59,14 +62,6 @@ class Company(db.Model):
     phone_number = db.Column(db.String(30))
     ticket_quota = db.Column(db.Integer)
 
-    @classmethod
-    def __declare_last__(cls):
-        ValidateEmail(Company.email,
-                      allow_smtputf8=True,
-                      check_deliverability=True,
-                      throw_exception=True,
-                      message="The e-mail is invalid. Please check it.")
-
     def __init__(self, name, email, phone_number=None, ticket_quota=0):
         self.name = name
         self.email = email
@@ -75,6 +70,14 @@ class Company(db.Model):
 
     def __repr__(self):
         return f"Company('{self.name}', '{self.email}')"
+
+    @classmethod
+    def __declare_last__(cls):
+        ValidateEmail(Company.email,
+                      allow_smtputf8=True,
+                      check_deliverability=True,
+                      throw_exception=True,
+                      message="The e-mail is invalid. Please check it.")
 
 
 class Country(db.Model):
@@ -85,6 +88,16 @@ class Country(db.Model):
     cities = db.relationship('City',
                              back_populates="country",
                              lazy=True)
+    passport = db.relationship('Passport',
+                               back_populates="user_country",
+                               uselist=False,
+                               lazy=True)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return (f"Country('{self.name}')")
 
     @classmethod
     def __declare_last__(cls):
@@ -92,12 +105,6 @@ class Country(db.Model):
                         allow_null=False,
                         throw_exception=True,
                         message="This country does not exist.")
-
-    def __init__(self, name):
-        self.name = name
-
-    def __repr__(self):
-        return (f"Country('{self.name}')")
 
 
 class City(db.Model):
@@ -118,3 +125,38 @@ class City(db.Model):
 
     def __repr__(self):
         return (f"City('{self.name}', '{self.country_id}')")
+
+
+class Passport(db.Model):
+    __tablename__ = "passport"
+
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('user.id'),
+                        primary_key=True)
+    user = db.relationship('User',
+                           back_populates="passports",
+                           lazy=True)
+    country_id = db.Column(db.Integer,
+                           db.ForeignKey('country.id'),
+                           nullable=False)
+    user_country = db.relationship('Country',
+                                   back_populates="passport",
+                                   lazy=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    date_of_birth = db.Column(db.Date, nullable=False)
+    issue_date = db.Column(db.Date, nullable=False)
+    expiration_date = db.Column(db.Date, nullable=False)
+
+    def __init__(self, country_id, first_name, last_name, date_of_birth,
+                 issue_date, expiration_date):
+        self.country_id = country_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.date_of_birth = date_of_birth
+        self.issue_date = issue_date
+        self.expiration_date = expiration_date
+
+    def __repr__(self):
+        return (f"Passport('{self.first_name}', '{self.last_name}',\
+                           '{self.expiration_date}')")
