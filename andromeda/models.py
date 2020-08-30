@@ -2,6 +2,7 @@ from andromeda import db, login_manager, bcrypt
 from flask_login import UserMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask_validator import ValidateEmail, ValidateCountry
+from andromeda.custom_validators import ValidatePhoneNumber
 
 
 @login_manager.user_loader
@@ -51,6 +52,10 @@ class User(db.Model, UserMixin):
                       check_deliverability=True,
                       throw_exception=True,
                       message="The e-mail is invalid. Please check it.")
+        ValidatePhoneNumber(User.phone_number,
+                            allow_null=True,
+                            throw_exception=True,
+                            message="Phone Number is invalid.")
 
 
 class Company(db.Model):
