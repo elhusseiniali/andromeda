@@ -75,17 +75,17 @@ class PassportView(ModelView):
 
 class FlightView(ModelView):
     column_list = ('name',
-                   'origin_city',
+                   'arrival_city',
                    'destination_city',
                    'departure',
                    'arrival')
     form_columns = ('name',
-                    'origin_city',
-                    'destination_city',
+                    'departure_city',
+                    'arrival_city',
                     'departure',
                     'arrival')
-    column_labels = dict(origin_city='From',
-                         destination_city='To',
+    column_labels = dict(departure_city='From',
+                         arrival_city='To',
                          departure='Departure Time',
                          arrival='Arrival Time')
     column_type_formatters = MY_DEFAULT_FORMATTERS
