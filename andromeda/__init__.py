@@ -25,7 +25,7 @@ login_manager.login_message_category = 'info'
 #   These two imports *had* to happen after initializing db.
 from andromeda import routes
 from andromeda.models import User, Company, Country, City, Passport
-from andromeda.models import Flight
+from andromeda.models import Flight, Employment
 
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -86,11 +86,17 @@ class FlightView(ModelView):
     column_type_formatters = MY_DEFAULT_FORMATTERS
 
 
+class CompanyView(ModelView):
+    form_excluded_columns = ('employees')
+    column_type_formatters = MY_DEFAULT_FORMATTERS
+
+
 admin = Admin(app, name='Andromeda Admin', template_mode='bootstrap3')
 # Add administrative views here
 admin.add_view(UserView(User, db.session))
-admin.add_view(ModelView(Company, db.session))
+admin.add_view(CompanyView(Company, db.session))
 admin.add_view(CountryView(Country, db.session))
 admin.add_view(CityView(City, db.session))
 admin.add_view(PassportView(Passport, db.session))
 admin.add_view(FlightView(Flight, db.session))
+admin.add_view(ModelView(Employment, db.session))
