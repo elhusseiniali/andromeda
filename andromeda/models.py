@@ -33,12 +33,10 @@ class User(db.Model, UserMixin):
                                back_populates="user",
                                lazy=True)
 
-    def __init__(self, user_id,
+    def __init__(self,
                  username, email,
                  password,
                  phone_number=None):
-        self.user_id = user_id
-
         self.username = username
         self.email = email
 
