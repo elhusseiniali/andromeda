@@ -21,6 +21,10 @@ class User(db.Model, UserMixin):
     passports = db.relationship('Passport',
                                 back_populates="user",
                                 lazy=True)
+    employee = db.relationship('Employment',
+                               back_populates="user",
+                               uselist=False,
+                               lazy=True)
 
     def __init__(self, username, email, password, phone_number=None):
         self.username = username
@@ -66,6 +70,9 @@ class Company(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     phone_number = db.Column(db.String(30))
     ticket_quota = db.Column(db.Integer, default=0)
+    employees = db.relationship('Employment',
+                                back_populates="company",
+                                lazy=True)
 
     def __init__(self, name, email, phone_number=None, ticket_quota=0):
         self.name = name
@@ -211,3 +218,28 @@ class Flight(db.Model):
     def __repr__(self):
         return (f"Flight('{self.name}', '{self.destination_city}',"
                 f"'{self.origin_city}')")
+
+
+class Employment(db.Model):
+    __tablename__ = "employment"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('user.id'),
+                        nullable=False)
+    user = db.relationship('User',
+                           back_populates="employee",
+                           lazy=True)
+    company_id = db.Column(db.Integer,
+                           db.ForeignKey('company.id'),
+                           nullable=False)
+    company = db.relationship('Company',
+                              back_populates="employees",
+                              lazy=True)
+
+    def __init__(self, user_id, company_id):
+        self.user_id = user_id
+        self.company_id = company_id
+
+    def __repr__(self):
+        return f"Employment('{self.user}', '{self.company}')"
