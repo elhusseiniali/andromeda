@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask_validator import ValidateEmail, ValidateCountry
 from andromeda.custom_validators import ValidatePhoneNumber
+from sqlalchemy.sql import func
 
 
 @login_manager.user_loader
@@ -25,8 +26,11 @@ class User(db.Model, UserMixin):
                                back_populates="user",
                                uselist=False,
                                lazy=True)
+    bookings = db.relationship('Booking',
+                               back_populates="user",
+                               lazy=True)
 
-    def __init__(self, username, email, password, phone_number=None):
+    def __init__(self, username, email, password, phone_number):
         self.username = username
         self.email = email
         self.password = password
@@ -74,7 +78,7 @@ class Company(db.Model):
                                 back_populates="company",
                                 lazy=True)
 
-    def __init__(self, name, email, phone_number=None, ticket_quota=0):
+    def __init__(self, name, email, phone_number, ticket_quota):
         self.name = name
         self.email = email
         self.phone_number = phone_number
@@ -206,6 +210,9 @@ class Flight(db.Model):
                                   foreign_keys=origin_city_id,
                                   back_populates="departures",
                                   lazy=True)
+    bookings = db.relationship('Booking',
+                               back_populates="flight",
+                               lazy=True)
 
     def __init__(self, name, destination_city_id, origin_city_id, departure,
                  arrival):
@@ -236,6 +243,9 @@ class Employment(db.Model):
     company = db.relationship('Company',
                               back_populates="employees",
                               lazy=True)
+    bookings = db.relationship('Booking',
+                               back_populates="employment",
+                               lazy=True)
 
     def __init__(self, user_id, company_id):
         self.user_id = user_id
@@ -243,3 +253,43 @@ class Employment(db.Model):
 
     def __repr__(self):
         return f"Employment('{self.user}', '{self.company}')"
+
+
+class Booking(db.Model):
+    __tablename__ = "booking"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    flight_id = db.Column(db.Integer,
+                          db.ForeignKey('flight.id'),
+                          nullable=False)
+    flight = db.relationship('Flight',
+                             back_populates="bookings",
+                             lazy=True)
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('user.id'),
+                        nullable=False)
+    user = db.relationship('User',
+                           back_populates="bookings",
+                           lazy=True)
+    issuing_employment_id = db.Column(db.Integer,
+                                      db.ForeignKey('employment.id'),
+                                      nullable=False)
+    employment = db.relationship('Employment',
+                                 back_populates="bookings",
+                                 lazy=True)
+    date_issued = db.Column(db.DateTime(timezone=True),
+                            server_default=func.now(),
+                            nullable=False)
+    cancellation_fee = db.Column(db.Float, default=0)
+    cancellation_deadline = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, flight_id, user_id, issuing_employment_id, date_issued,
+                 cancellation_fee, cancellation_deadline):
+        self.flight_id = flight_id
+        self.user_id = user_id
+        self.issuing_employment_id = issuing_employment_id
+        self.date_issued = date_issued
+        self.cancellation_fee = cancellation_fee
+        self.cancellation_deadline = cancellation_deadline
+
+    def __repr__(self):
+        return f"Booking('{self.flight}', '{self.user}', '{self.date_issued}')"
