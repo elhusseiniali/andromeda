@@ -14,7 +14,7 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     __tablename__ = "user"
 
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
@@ -24,7 +24,8 @@ class User(db.Model, UserMixin):
 
     passport = db.relationship('Passport',
                                back_populates="user",
-                               uselist=False)
+                               uselist=False,
+                               lazy=False)
     employment = db.relationship('Employment',
                                  back_populates="user",
                                  uselist=False,
@@ -44,7 +45,7 @@ class User(db.Model, UserMixin):
         self.phone_number = phone_number
 
     def __repr__(self):
-        return (f"User('{self.user_id}: {self.username}','{self.email}')")
+        return (f"User('{self.id}: {self.username}','{self.email}')")
 
     @hybrid_property
     def password(self):
@@ -76,7 +77,7 @@ class User(db.Model, UserMixin):
 class Company(db.Model):
     __tablename__ = "company"
 
-    company_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
@@ -87,15 +88,15 @@ class Company(db.Model):
                                 back_populates="company",
                                 lazy=True)
 
-    def __init__(self, company_id, name, email, phone_number, ticket_quota):
-        self.company_id = company_id
+    def __init__(self, id, name, email, phone_number, ticket_quota):
+        self.id = id
         self.name = name
         self.email = email
         self.phone_number = phone_number
         self.ticket_quota = ticket_quota
 
     def __repr__(self):
-        return (f"Company('{self.company_id}: "
+        return (f"Company('{self.id}: "
                 f"{self.name}', '{self.email}')")
 
     @classmethod
@@ -108,13 +109,13 @@ class Company(db.Model):
         ValidatePhoneNumber(Company.phone_number,
                             allow_null=True,
                             throw_exception=True,
-                            message="Phone Number is invalid.")
+                            message="Phone number is invalid.")
 
 
 class Country(db.Model):
     __tablename__ = "country"
 
-    country_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(60), unique=True, nullable=False)
 
@@ -125,12 +126,12 @@ class Country(db.Model):
                                 back_populates="country",
                                 lazy=True)
 
-    def __init__(self, country_id, name):
-        self.country_id = country_id
+    def __init__(self, id, name):
+        self.id = id
         self.name = name
 
     def __repr__(self):
-        return (f"Country('{self.country_id}: {self.name}')")
+        return (f"Country('{self.id}: {self.name}')")
 
     @classmethod
     def __declare_last__(cls):
@@ -143,12 +144,12 @@ class Country(db.Model):
 class City(db.Model):
     __tablename__ = "city"
 
-    city_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(50), nullable=False)
 
     country_id = db.Column(db.Integer,
-                           db.ForeignKey('country.country_id'),
+                           db.ForeignKey('country.id'),
                            nullable=False)
     country = db.relationship('Country',
                               back_populates="cities",
@@ -162,20 +163,20 @@ class City(db.Model):
                                  back_populates="departure_city",
                                  lazy=True)
 
-    def __init__(self, city_id, name, country_id):
-        self.city_id = city_id
+    def __init__(self, id, name, country_id):
+        self.id = id
         self.name = name
         self.country_id = country_id
 
     def __repr__(self):
-        return (f"City('{self.city_id}': '{self.name}')")
+        return (f"City('{self.id}': '{self.name}')")
 
 
 class Passport(db.Model):
     __tablename__ = "passport"
 
     user_id = db.Column(db.Integer,
-                        db.ForeignKey('user.user_id'),
+                        db.ForeignKey('user.id'),
                         primary_key=True)
     user = db.relationship('User',
                            back_populates="passport",
@@ -189,7 +190,7 @@ class Passport(db.Model):
     expiration_date = db.Column(db.Date, nullable=False)
 
     country_id = db.Column(db.Integer,
-                           db.ForeignKey('country.country_id'),
+                           db.ForeignKey('country.id'),
                            nullable=False)
     country = db.relationship('Country',
                               back_populates="passports",
@@ -212,13 +213,13 @@ class Passport(db.Model):
 class Flight(db.Model):
     __tablename__ = "flight"
 
-    flight_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(50), unique=True, nullable=False)
 
     arrival = db.Column(db.DateTime, nullable=False)
     arrival_city_id = db.Column(db.Integer,
-                                db.ForeignKey('city.city_id'),
+                                db.ForeignKey('city.id'),
                                 nullable=False)
     arrival_city = db.relationship('City',
                                    foreign_keys=arrival_city_id,
@@ -227,7 +228,7 @@ class Flight(db.Model):
 
     departure = db.Column(db.DateTime, nullable=False)
     departure_city_id = db.Column(db.Integer,
-                                  db.ForeignKey('city.city_id'),
+                                  db.ForeignKey('city.id'),
                                   nullable=False)
     departure_city = db.relationship('City',
                                      foreign_keys=departure_city_id,
@@ -256,17 +257,17 @@ class Flight(db.Model):
 class Employment(db.Model):
     __tablename__ = "employment"
 
-    employment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     user_id = db.Column(db.Integer,
-                        db.ForeignKey('user.user_id'),
+                        db.ForeignKey('user.id'),
                         nullable=False)
     user = db.relationship('User',
                            back_populates="employment",
                            lazy=True)
 
     company_id = db.Column(db.Integer,
-                           db.ForeignKey('company.company_id'),
+                           db.ForeignKey('company.id'),
                            nullable=False)
     company = db.relationship('Company',
                               back_populates="employees",
@@ -286,16 +287,16 @@ class Employment(db.Model):
 
 class Booking(db.Model):
     __tablename__ = "booking"
-    booking_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     flight_id = db.Column(db.Integer,
-                          db.ForeignKey('flight.flight_id'),
+                          db.ForeignKey('flight.id'),
                           nullable=False)
     flight = db.relationship('Flight',
                              back_populates="bookings",
                              lazy=True)
 
     user_id = db.Column(db.Integer,
-                        db.ForeignKey('user.user_id'),
+                        db.ForeignKey('user.id'),
                         nullable=False)
     user = db.relationship('User',
                            back_populates="bookings",
@@ -315,10 +316,10 @@ class Booking(db.Model):
     cancellation_fee = db.Column(db.Float, default=0)
     cancellation_deadline = db.Column(db.Date, nullable=False)
 
-    def __init__(self, booking_id, flight_id,
+    def __init__(self, id, flight_id,
                  user_id, issuing_employment_id, date_issued,
                  cancellation_fee, cancellation_deadline):
-        self.booking_id = booking_id
+        self.id = id
         self.flight_id = flight_id
         self.user_id = user_id
         self.issuing_employment_id = issuing_employment_id
@@ -327,6 +328,6 @@ class Booking(db.Model):
         self.cancellation_deadline = cancellation_deadline
 
     def __repr__(self):
-        return (f"Booking('ID: {self.booking_id}', "
+        return (f"Booking('ID: {self.id}', "
                 f"'User: {self.user_id}', "
                 f"'Flight: {self.flight_id}')")
