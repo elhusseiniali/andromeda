@@ -338,5 +338,5 @@ class Booking(db.Model):
         self.cancellation_deadline = cancellation_deadline
 
     def __repr__(self):
-        return (f"'User: {self.user_id}', "
-                f"'Flight: {self.flight_id}')")
+        return (f"{self.user}, "
+                f"{self.flight}")
