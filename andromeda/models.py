@@ -126,8 +126,7 @@ class Country(db.Model):
                                 back_populates="country",
                                 lazy=True)
 
-    def __init__(self, id, name):
-        self.id = id
+    def __init__(self, name):
         self.name = name
 
     def __repr__(self):
