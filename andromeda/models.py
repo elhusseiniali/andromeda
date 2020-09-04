@@ -5,6 +5,9 @@ from flask_validator import ValidateEmail, ValidateCountry
 from andromeda.custom_validators import ValidatePhoneNumber
 from sqlalchemy.sql import func
 
+from datetime import date
+from datetime import datetime
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -45,7 +48,7 @@ class User(db.Model, UserMixin):
         self.phone_number = phone_number
 
     def __repr__(self):
-        return (f"User('{self.id}: {self.username}','{self.email}')")
+        return (f"User('{self.username}': '{self.email}')")
 
     @hybrid_property
     def password(self):
@@ -95,8 +98,7 @@ class Company(db.Model):
         self.ticket_quota = ticket_quota
 
     def __repr__(self):
-        return (f"Company('{self.id}: "
-                f"{self.name}', '{self.email}')")
+        return (f"Company('{self.name}': '{self.email}')")
 
     @classmethod
     def __declare_last__(cls):
@@ -166,7 +168,7 @@ class City(db.Model):
         self.country = country
 
     def __repr__(self):
-        return (f"City('{self.name}') in {self.country})")
+        return (f"City('{self.name}') in {self.country}")
 
 
 class Passport(db.Model):
@@ -193,18 +195,22 @@ class Passport(db.Model):
                               back_populates="passports",
                               lazy=True)
 
-    def __init__(self, country_id, first_name, last_name, date_of_birth,
+    def __init__(self, first_name, last_name, date_of_birth,
+                 country,
                  issue_date, expiration_date):
-        self.country_id = country_id
         self.first_name = first_name
         self.last_name = last_name
         self.date_of_birth = date_of_birth
+
+        self.country = country
+
         self.issue_date = issue_date
         self.expiration_date = expiration_date
 
     def __repr__(self):
-        return (f"Passport('{self.first_name}', '{self.last_name}',"
-                f"'{self.expiration_date}')")
+        return (f"Passport for ('{self.last_name}', '{self.first_name}'). "
+                f"Expires on: '{self.expiration_date}') ."
+                f"From: '{self.country}'")
 
 
 class Flight(db.Model):
@@ -236,19 +242,21 @@ class Flight(db.Model):
                                back_populates="flight",
                                lazy=True)
 
-    def __init__(self, flight_id, name,
-                 departure_city_id, arrival_city_id,
+    def __init__(self, name,
+                 departure_city, arrival_city,
                  departure, arrival):
-        self.flight_id = flight_id
         self.name = name
-        self.departure_city_id = departure_city_id
-        self.arrival_city_id = arrival_city_id
+
+        self.departure_city = departure_city
+        self.arrival_city = arrival_city
+
         self.departure = departure
         self.arrival = arrival
 
     def __repr__(self):
-        return (f"Flight('{self.name}', '{self.departure_city_id}',"
-                f"'{self.arrival_city_id}')")
+        return (f"Flight('{self.name}'). "
+                f"Departing from: '{self.departure_city}'. "
+                f"Going to: '{self.arrival_city}'")
 
 
 class Employment(db.Model):
@@ -270,16 +278,20 @@ class Employment(db.Model):
                               back_populates="employees",
                               lazy=True)
 
+    employment_date = db.Column(db.Date, nullable=True)
+
     bookings = db.relationship('Booking',
                                back_populates="employment",
                                lazy=True)
 
-    def __init__(self, user_id, company_id):
-        self.user_id = user_id
-        self.company_id = company_id
+    def __init__(self, user, company, employment_date=date.today()):
+        self.user = user
+        self.company = company
+        self.employment_date = employment_date
 
     def __repr__(self):
-        return f"Employment('{self.user}', '{self.company}')"
+        return (f"Employment('{self.user}', in '{self.company}'). "
+                f"Employed on: {self.employment_date}")
 
 
 class Booking(db.Model):
@@ -313,17 +325,18 @@ class Booking(db.Model):
     cancellation_fee = db.Column(db.Float, default=0)
     cancellation_deadline = db.Column(db.Date, nullable=False)
 
-    def __init__(self, flight_id,
-                 user_id, issuing_employment_id, date_issued,
-                 cancellation_fee, cancellation_deadline):
-        self.flight_id = flight_id
-        self.user_id = user_id
-        self.issuing_employment_id = issuing_employment_id
+    def __init__(self, flight,
+                 user, issuing_employment,
+                 cancellation_deadline,
+                 date_issued=datetime.now(),
+                 cancellation_fee=0):
+        self.flight = flight
+        self.user = user
+        self.issuing_employment = issuing_employment
         self.date_issued = date_issued
         self.cancellation_fee = cancellation_fee
         self.cancellation_deadline = cancellation_deadline
 
     def __repr__(self):
-        return (f"Booking('ID: {self.id}', "
-                f"'User: {self.user_id}', "
+        return (f"'User: {self.user_id}', "
                 f"'Flight: {self.flight_id}')")
