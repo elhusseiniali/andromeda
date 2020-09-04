@@ -88,8 +88,7 @@ class Company(db.Model):
                                 back_populates="company",
                                 lazy=True)
 
-    def __init__(self, id, name, email, phone_number, ticket_quota):
-        self.id = id
+    def __init__(self, name, email, phone_number, ticket_quota):
         self.name = name
         self.email = email
         self.phone_number = phone_number
@@ -162,8 +161,7 @@ class City(db.Model):
                                  back_populates="departure_city",
                                  lazy=True)
 
-    def __init__(self, id, name, country_id):
-        self.id = id
+    def __init__(self, name, country_id):
         self.name = name
         self.country_id = country_id
 
@@ -315,10 +313,9 @@ class Booking(db.Model):
     cancellation_fee = db.Column(db.Float, default=0)
     cancellation_deadline = db.Column(db.Date, nullable=False)
 
-    def __init__(self, id, flight_id,
+    def __init__(self, flight_id,
                  user_id, issuing_employment_id, date_issued,
                  cancellation_fee, cancellation_deadline):
-        self.id = id
         self.flight_id = flight_id
         self.user_id = user_id
         self.issuing_employment_id = issuing_employment_id
