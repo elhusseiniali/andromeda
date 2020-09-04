@@ -129,7 +129,7 @@ class Country(db.Model):
         self.name = name
 
     def __repr__(self):
-        return (f"Country('{self.id}: {self.name}')")
+        return (f"Country('{self.name}')")
 
     @classmethod
     def __declare_last__(cls):
@@ -166,7 +166,7 @@ class City(db.Model):
         self.country = country
 
     def __repr__(self):
-        return (f"City('{self.id}': '{self.name}')")
+        return (f"City('{self.name}') in {self.country})")
 
 
 class Passport(db.Model):
