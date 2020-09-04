@@ -13,8 +13,8 @@ class TestObjectCreation(unittest.TestCase):
         assert france
         assert germany
 
-        paris = City(name="Paris")
-        berlin = City(name="Berlin")
+        paris = City(name="Paris", country=france)
+        berlin = City(name="Berlin", country=germany)
 
         assert paris
         assert berlin

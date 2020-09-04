@@ -161,9 +161,9 @@ class City(db.Model):
                                  back_populates="departure_city",
                                  lazy=True)
 
-    def __init__(self, name, country_id):
+    def __init__(self, name, country):
         self.name = name
-        self.country_id = country_id
+        self.country = country
 
     def __repr__(self):
         return (f"City('{self.id}': '{self.name}')")
