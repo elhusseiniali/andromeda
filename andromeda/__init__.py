@@ -31,90 +31,14 @@ login_manager.login_message_category = 'info'
 from andromeda import routes
 from andromeda.models import User, Company, Country, City, Passport
 from andromeda.models import Flight, Employment, Booking
+from andromeda.admin_views import UserView, CompanyView, CountryView, CityView
+from andromeda.admin_views import BookingView, EmploymentView, PassportView
+from andromeda.admin_views import FlightView
 
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
-from flask_admin.model import typefmt
-
 
 # set optional bootswatch theme
 app.config['FLASK_ADMIN_SWATCH'] = 'flatly'
-
-# Show null values instead of empty strings.
-MY_DEFAULT_FORMATTERS = dict(typefmt.BASE_FORMATTERS)
-MY_DEFAULT_FORMATTERS.update({type(None): typefmt.null_formatter})
-
-
-class UserView(ModelView):
-    form_columns = (
-        'username',
-        'email',
-        'password',
-        'phone_number',
-    )
-    column_editable_list = ('username', 'email', 'phone_number')
-    column_searchable_list = ('username', 'email')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
-
-
-class CountryView(ModelView):
-    form_excluded_columns = ('cities', 'passport', 'passports')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
-
-
-class CityView(ModelView):
-    form_columns = ('name', 'country')
-    column_list = ('name', 'country')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
-
-
-class PassportView(ModelView):
-    column_labels = dict(user_country='Country')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
-
-
-class FlightView(ModelView):
-    column_list = ('name',
-                   'arrival_city',
-                   'destination_city',
-                   'departure',
-                   'arrival')
-    form_columns = ('name',
-                    'departure_city',
-                    'arrival_city',
-                    'departure',
-                    'arrival')
-    column_labels = dict(departure_city='From',
-                         arrival_city='To',
-                         departure='Departure Time',
-                         arrival='Arrival Time')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
-
-
-class CompanyView(ModelView):
-    form_excluded_columns = ('employees')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
-
-
-class EmploymentView(ModelView):
-    form_excluded_columns = ('bookings')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
-
-
-class BookingView(ModelView):
-    column_list = ('user',
-                   'flight',
-                   'employment',
-                   'date_issued',
-                   'cancellation_fee',
-                   'cancellation_deadline')
-    form_columns = ('user',
-                    'flight',
-                    'employment',
-                    'date_issued',
-                    'cancellation_fee',
-                    'cancellation_deadline')
-    column_type_formatters = MY_DEFAULT_FORMATTERS
 
 
 admin = Admin(app, name='Andromeda Admin', template_mode='bootstrap3')
