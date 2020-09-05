@@ -195,9 +195,12 @@ class Passport(db.Model):
                               back_populates="passports",
                               lazy=True)
 
-    def __init__(self, first_name, last_name, date_of_birth,
+    def __init__(self, user,
+                 first_name, last_name, date_of_birth,
                  country,
                  issue_date, expiration_date):
+        self.user = user
+
         self.first_name = first_name
         self.last_name = last_name
         self.date_of_birth = date_of_birth
@@ -326,8 +329,9 @@ class Booking(db.Model):
     cancellation_deadline = db.Column(db.Date, nullable=False)
 
     def __init__(self, flight,
-                 user, issuing_employment,
+                 user,
                  cancellation_deadline,
+                 issuing_employment=None,
                  date_issued=datetime.now(),
                  cancellation_fee=0):
         self.flight = flight
