@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from .apis import blueprint as api
+from andromeda.api import blueprint as api
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '60808326457a6384f78964761aaa161c'
@@ -18,7 +18,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.register_blueprint(api, url_prefix='/api/1')
+app.register_blueprint(api, url_prefix='/api/v1')
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
