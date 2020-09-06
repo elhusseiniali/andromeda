@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from andromeda.api import blueprint as api
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '60808326457a6384f78964761aaa161c'
@@ -18,12 +18,13 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.register_blueprint(api, url_prefix='/api/v1')
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
+from andromeda.api import blueprint as api
+app.register_blueprint(api, url_prefix='/api/v1')
 
 #   Below import is necessary, even if the linter complains about it.
 #   This is because the linter cannot distinguish between imports in a script
