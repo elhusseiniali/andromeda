@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restx import Api
 
-from andromeda.api.users import api as ns1
+from andromeda.api.user import api as ns1
 
 blueprint = Blueprint('api', __name__)
 

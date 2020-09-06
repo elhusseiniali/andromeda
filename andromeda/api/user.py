@@ -2,7 +2,7 @@ from flask_restx import Namespace, Resource, fields
 
 from andromeda.models import User, db
 
-api = Namespace('users', description='User related operations')
+api = Namespace('user', description='User related operations')
 
 user = api.model('user', {
     'username': fields.String(required=True, description='user username'),
@@ -14,17 +14,22 @@ user = api.model('user', {
 })
 
 
-@api.route('/')
-class UserList(Resource):
+# TODO: Add service foldder to add user CRUD class.
+# TODO: Figure out how to give get and post different descriptions.
+# TODO: Incorporate Flask_marhmallow.
 
-    @api.doc('get all users')
+@api.route('/')
+class GetAllUsers(Resource):
     @api.marshal_list_with(user)
     def get(self):
         return User.query.all()
 
-    @api.doc('create_user')
-    @api.expect(user)
+    # TODO: Take arguments from parameters and not payload.
+    # TODO: Remove this function from here. Consider adding this in
+    # it's own class instead of a part of another.
+    @api.expect(user, validate=True)
     @api.marshal_with(user, code=201)
+    @api.response(409, "This user already exists")
     def post(self):
         data = api.payload
 
@@ -43,3 +48,18 @@ class UserList(Resource):
         else:
             # Error code 409: resource (user) already exists.
             return api.abort(409, "This user already exists")
+
+
+@api.route('/id=<int:id>',
+           doc={'description': 'Get User from user id.'})
+class getUser(Resource):
+    @api.response(404, "This user doesn't exist")
+    @api.marshal_with(user)
+    def get(self, id):
+        user = User.query.filter_by(id=id).first()
+
+        if user is None:
+            return api.abort(404, "This user doesn't exists")
+
+        else:
+            return user, 200
