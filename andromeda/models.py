@@ -1,9 +1,10 @@
 from andromeda import db, login_manager, bcrypt
 from flask_login import UserMixin
 from sqlalchemy.ext.hybrid import hybrid_property
-from flask_validator import ValidateEmail, ValidateCountry
-from andromeda.custom_validators import ValidatePhoneNumber
+from flask_validator import ValidateEmail, ValidateLength
+from andromeda.custom_validators import ValidatePhoneNumber, ValidateCountry
 from sqlalchemy.sql import func
+from sqlalchemy import CheckConstraint
 
 from datetime import date
 from datetime import datetime
@@ -65,7 +66,6 @@ class User(db.Model, UserMixin):
     def __declare_last__(cls):
         # Check available validators:
         # https://flask-validator.readthedocs.io/en/latest/
-        # TODO: handle exception properly in admin panel
         ValidateEmail(User.email,
                       allow_smtputf8=True,
                       check_deliverability=True,
@@ -115,10 +115,11 @@ class Company(db.Model):
 
 class Country(db.Model):
     __tablename__ = "country"
+    MAX_NAME_LENGTH = 60
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
-    name = db.Column(db.String(60), unique=True, nullable=False)
+    name = db.Column(db.String(MAX_NAME_LENGTH), unique=True, nullable=False)
 
     cities = db.relationship('City',
                              back_populates="country",
@@ -135,6 +136,13 @@ class Country(db.Model):
 
     @classmethod
     def __declare_last__(cls):
+        # Validate Country length to not allow country codes.
+        ValidateLength(Country.name,
+                       max_length=cls.MAX_NAME_LENGTH,
+                       min_length=4,
+                       throw_exception=True,
+                       message="Country name too short.")
+        # Validate Country according to the iso3166 standard.
         ValidateCountry(Country.name,
                         allow_null=False,
                         throw_exception=True,
@@ -173,6 +181,9 @@ class City(db.Model):
 
 class Passport(db.Model):
     __tablename__ = "passport"
+    __table_args__ = (
+        CheckConstraint('expiration_date > issue_date'),
+    )
 
     user_id = db.Column(db.Integer,
                         db.ForeignKey('user.id'),
@@ -183,6 +194,7 @@ class Passport(db.Model):
 
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
+    # TODO: #17 Check DOB to be greater than today's date.
     date_of_birth = db.Column(db.Date, nullable=False)
 
     issue_date = db.Column(db.Date, nullable=False)
@@ -218,6 +230,9 @@ class Passport(db.Model):
 
 class Flight(db.Model):
     __tablename__ = "flight"
+    __table_args__ = (
+        CheckConstraint('arrival > departure'),
+    )
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
