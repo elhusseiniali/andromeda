@@ -33,7 +33,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        flash(f'Account created! You can now log in.', 'success')
+        flash('Account created! You can now log in.', 'success')
         return redirect(url_for('login'))
 
     return render_template('register.html',
