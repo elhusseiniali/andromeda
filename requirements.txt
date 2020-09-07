@@ -1,4 +1,4 @@
-attrs==20.1.0
+attrs==20.2.0
 bcrypt==3.2.0
 cffi==1.14.2
 click==7.1.2
