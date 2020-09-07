@@ -1,0 +1,136 @@
+body{
+    height: 100vh;
+    background: linear-gradient(to right,  #194957,   #4b6973, #c4cad4) !important;
+    /* background: #547c8c !important; */
+    /* background:  #317393  !important; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+} 
+
+.card{
+    overflow: hidden;
+    border: 0 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);
+}
+
+.img-left{
+  width: 45%;
+  background: url(../image6.jpg) center;
+  background-size: cover;
+}
+
+.card-body{
+    padding: 2rem;
+}
+
+.title{
+    margin-bottom: 2rem;
+}
+
+.form-input{
+    position: relative;
+
+}
+
+.form-input input{
+    width: 100%;
+    height:45px;
+    padding-left: 40px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    box-shadow: none;
+    border: 1px solid #000020;
+    border-radius: 50px;
+    outline: none;
+    background: transparent;
+}
+
+.form-input span{
+    position: absolute;
+    top: 10px;
+    padding-left: 15px;
+    color: #547c8c;
+}
+
+
+.form-input input::placeholder{
+    color: #194957;
+    opacity: 0.2;
+    padding-left: 0px;
+}
+
+.form-input input:focus, .form-input input:valid{
+    border: 2px solid #194957
+}
+
+.form-input input:focus::placeholder{
+    color: #194957; 
+}
+
+.custom-checkbox .form-check-input:checked ~ .form-check-input-label::before{
+    background-color: #194957 !important;
+    border: 0px;
+}
+
+.form-box button[type="submit"]{
+    margin-top: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    background: #194957;
+    color: #fff;
+    font-size: 90%;
+    font-weight: bold;
+    /* letter-spacing: 0.2rem; */
+    transition: 0.5s;
+    padding: 12px;
+
+}
+
+.form-box button[type="submit"]:hover{
+    background:#547c8c ;
+}
+
+.forget-link, .register-link{
+    color: #194957;
+    font-weight:bold;
+}
+
+.forget-link:hover, .register-link:hover{
+    color:#547c8c ;
+    text-decoration: none;
+}
+
+.form-box .btn-social{
+    color: white !important;
+    border: 0;
+    font-weight: bold;
+}
+
+/* .form-box .btn-facebook{
+    background: #4866a8;
+} */
+.form-box .btn-google{
+    margin-top: 10px;
+    border-radius: 50px;
+    background: #194957;
+}
+
+/* .form-box .btn-twitter{
+    background: #33ccff;
+} */
+
+/* .form-box .btn-facebook:hover{
+    background: #3d578f;
+} */
+.form-box .btn-google:hover{
+    background: #547c8c;
+}
+/* 
+.form-box .btn-twitter:hover{
+    background: #2eb7e5;
+} */

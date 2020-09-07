@@ -1,17 +1,27 @@
-{% extends 'layout.html' %}
+{% extends 'layout.html'%}
+    {% block head_html %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet"  type="text/css" href="{{ url_for('static', filename='css/login.css') }}">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+        {% endblock head_html %}
 
-{% block content %}
-    <div class="content-section">
-        <form class="" action="" method="POST">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border bottom mb-4">
-                    Log in.
-                </legend>
-                <div class="form-group" placeholder="example@example.com">
-                    {{ form.email.label(class="form-control-label") }}
-
-                    {% if form.email.errors %}
+    {% block body %}
+       <div class="container">
+           <div class="row px-3">
+               <div class="col-lg-10 col-xl-9 card flex-row mx-auto px-0" >
+                   <div class="img-left d-none d-md-flex"></div>
+                   <div class="card-body">
+                       <h4 class="title text-center mt-4">
+                           Login 
+                       </h4>
+                       <form class="form-box px-3" action="" method="POST">
+                        {{ form.hidden_tag() }}
+                           <div class="form-input" >
+                               <span><i class="fa fa-envelope-o"></i></span>
+                               {% if form.email.errors %}
                         {{ form.email.label(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.email.errors %}
@@ -23,11 +33,10 @@
                     {% else %}
                         {{ form.email(class="form-control form-control-lg") }}
                     {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.password.label(class="form-control-label") }}
-
-                    {% if form.password.errors %}
+                           </div>
+                           <div class="form-input">
+                            <span><i class="fa fa-key"></i></span>
+                            {% if form.password.errors %}
                         {{ form.password.label(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
                             {% for error in form.password.errors %}
@@ -39,27 +48,42 @@
                     {% else %}
                         {{ form.password(class="form-control form-control-lg") }}
                     {% endif %}
-                </div>
-                <div class="form-check">
-                    {{ form.remember(class="form-check-input") }}
-                    {{ form.remember.label(class="form-check-input-label") }}
-
-                </div>
-            </fieldset>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-
-            <small class="text-muted ml-2">
-                <a href="#">Forgot password?</a>
-            </small>
-        </form>
-    </div>
-
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Don't have an account?
-            <a class="ml-2" href="{{ url_for('register') }}">Sign up now</a>
-        </small>
-    </div>
-{% endblock content %}
+                        </div>
+                        <div class="mb-3">
+                            <div class="custom-control custom-checkbox">
+                                {{ form.remember(class="form-check-input") }}
+                                {{ form.remember.label(class="form-check-input-label") }}
+            
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-group">
+                                {{ form.submit(class="btn btn-outline-info") }}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <a href="#" class="forget-link">
+                                Forgot Password?
+                            </a>
+                        </div>
+                        <div class="text-center mb-3">
+                            or login with
+                        </div>
+                        <div class="mb-3">                   
+                               <a href="#" class="btn btn-block btn-social btn-google"> 
+                                   Google
+                                </a>
+                        </div>
+                            <hr class="my-4">
+                            <div class="text-center mb-2">
+                               Don't have an account?
+                               <a href="{{ url_for('register') }}" class="register-link">
+                                   Register here
+                               </a> 
+                            </div>
+                       </form>
+                   </div>
+               </div>
+           </div>
+       </div>
+ {% endblock body %}

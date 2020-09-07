@@ -1,92 +1,58 @@
-{% extends 'layout.html' %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <title>Registration form</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet"  type="text/css" href="{{ url_for('static', filename='css/register.css') }}">
+        <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+    </head>
 
-{% block content %}
-    <div class="content-section">
-        <form class="" action="" method="POST">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-                <legend class="border bottom mb-4">
-                    Create a new account.
-                </legend>
-                <div class="row">
-                    <div class="col">
-                        {{ form.username.label(class="form-control-label") }}
-                        {% if form.username.errors %}
-                            {{ form.username.label(class="form-control form-control-lg is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.username.errors %}
-                                    <span>
-                                        {{ error }}
-                                    </span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.username(class="form-control form-control-lg") }}
-                        {% endif %}
-                    </div>
+    <body>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-10 col-xl-9 mx-auto">
+              <div class="card card-signin flex-row my-5">
+                <div class="card-img-left d-none d-md-flex">
+                   <!-- Background image for card set in CSS! -->
                 </div>
-                <div class="form-group" placeholder="example@example.com">
-                    {{ form.email.label(class="form-control-label") }}
-
-                    {% if form.email.errors %}
-                        {{ form.email.label(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                <span>
-                                    {{ error }}
-                                </span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="row">
-                    <div class="col">
-                        {{ form.password.label(class="form-control-label") }}
-
-                        {% if form.password.errors %}
-                            {{ form.password.label(class="form-control form-control-lg is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.password.errors %}
-                                    <span>
-                                        {{ error }}
-                                    </span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.password(class="form-control form-control-lg") }}
-                        {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title text-center">Register</h5>
+                  <form class="form-signin">
+                    <div class="form-label-group">
+                      <input type="text" id="inputUserame" class="form-control" placeholder="Username" required autofocus>
+                      <label for="inputUserame">Username</label>
                     </div>
-                    <div class="col">
-                        {{ form.confirm_password.label(class="form-control-label") }}
-
-                        {% if form.confirm_password.errors %}
-                            {{ form.confirm_password.label(class="form-control form-control-lg is-invalid") }}
-                            <div class="invalid-feedback">
-                                {% for error in form.confirm_password.errors %}
-                                    <span>
-                                        {{ error }}
-                                    </span>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            {{ form.confirm_password(class="form-control form-control-lg") }}
-                        {% endif %}
+      
+                    <div class="form-label-group">
+                      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+                      <label for="inputEmail">Email address</label>
                     </div>
+                    
+                    <hr>
+      
+                    <div class="form-label-group">
+                      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                      <label for="inputPassword">Password</label>
+                    </div>
+                    
+                    <div class="form-label-group">
+                      <input type="password" id="inputConfirmPassword" class="form-control" placeholder="Password" required>
+                      <label for="inputConfirmPassword">Confirm password</label>
+                    </div>
+      
+                    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Register</button>
+                    <a class="d-block text-center mt-2 small" href="{{ url_for('login') }}">Sign In</a>
+                    <hr class="my-4">
+                    <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign up with Google</button>
+                    <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class="fab fa-facebook-f mr-2"></i> Sign up with Facebook</button>
+                  </form>
                 </div>
-            </fieldset>
-
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
+              </div>
             </div>
-        </form>
-    </div>
-
-    <div class="border-top pt-3">
-        <small class="text-muted">
-            Already have an account?
-            <a class="ml-2" href="{{ url_for('login') }}">Sign in</a>
-        </small>
-    </div>
-{% endblock content %}
+          </div>
+        </div>
+      </body>
+</html>
