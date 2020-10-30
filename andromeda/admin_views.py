@@ -8,6 +8,13 @@ MY_DEFAULT_FORMATTERS.update({type(None): typefmt.null_formatter})
 
 
 class UserView(ModelView):
+    column_list = (
+        "id",
+        'username',
+        'email',
+        'password',
+        'phone_number',
+    )
     form_columns = (
         'username',
         'email',
