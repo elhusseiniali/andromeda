@@ -23,7 +23,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 more-itertools==8.5.0
 packaging==20.4
-phonenumbers==8.12.11
+phonenumbers==8.12.43
 pluggy==0.13.1
 py==1.9.0
 py-moneyed==0.8.0
