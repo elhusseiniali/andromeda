@@ -27,7 +27,7 @@ phonenumbers==8.12.11
 pluggy==0.13.1
 py==1.9.0
 py-moneyed==0.8.0
-pycodestyle==2.6.0
+pycodestyle==2.8.0
 pycparser==2.20
 pyflakes==2.2.0
 pyparsing==2.4.7
