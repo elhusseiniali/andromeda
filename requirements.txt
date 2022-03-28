@@ -16,7 +16,7 @@ Flask-WTF==0.14.3
 idna==2.10
 iniconfig==1.1.1
 isbnlib==3.10.3
-iso3166==1.0.1
+iso3166==2.0.2
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
