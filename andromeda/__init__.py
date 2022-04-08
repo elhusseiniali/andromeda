@@ -10,7 +10,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '60808326457a6384f78964761aaa161c'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
-app.config['SECURITY_PASSWORD_SCHEMES'] = ['pbkdf2_sha512']
+app.config['ERROR_404_HELP'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 #    CACHING FIX FOR PRODUCTION ONLY
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -23,6 +24,8 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
+from andromeda.api import blueprint as api
+app.register_blueprint(api, url_prefix='/api/v1')
 
 #   Below import is necessary, even if the linter complains about it.
 #   This is because the linter cannot distinguish between imports in a script
